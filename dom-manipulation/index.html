@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dynamic Quote Generator</title>
+  <title>Dynamic Quote Generator with Storage</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -67,6 +67,10 @@
       border-radius: 8px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
+
+    .storage-section {
+      margin-top: 25px;
+    }
   </style>
 </head>
 <body>
@@ -75,6 +79,11 @@
   <div id="categoryContainer"></div>
   <div id="quoteDisplay">Click “Show New Quote” to get started!</div>
   <button id="newQuote">Show New Quote</button>
+
+  <div class="storage-section">
+    <button id="exportBtn">Export Quotes (JSON)</button>
+    <input type="file" id="importFile" accept=".json" onchange="importFromJsonFile(event)" />
+  </div>
 
   <script src="script.js"></script>
 </body>
