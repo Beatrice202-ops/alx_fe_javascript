@@ -3,86 +3,64 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dynamic Quote Generator with Storage</title>
+  <title>Dynamic Quote Generator with Filter</title>
   <style>
     body {
       font-family: Arial, sans-serif;
+      background: #f5f5f5;
       text-align: center;
       padding: 20px;
-      background: #f4f4f9;
     }
-
-    h1 {
-      color: #333;
-    }
-
     #quoteDisplay {
-      margin: 20px auto;
-      padding: 20px;
       background: white;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-      width: 60%;
-      font-style: italic;
-    }
-
-    .category {
-      color: #666;
-      font-size: 14px;
-      margin-top: 10px;
-    }
-
-    button {
-      padding: 10px 20px;
-      margin: 10px;
-      border: none;
-      background: #007bff;
-      color: white;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background: #0056b3;
-    }
-
-    input {
-      padding: 8px;
-      margin: 5px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-
-    select {
-      padding: 8px;
-      border-radius: 5px;
-      margin-top: 10px;
-    }
-
-    .form-section {
-      margin-top: 30px;
-      background: #fff;
-      display: inline-block;
       padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      margin: 20px auto;
+      border-radius: 10px;
+      width: 60%;
+      box-shadow: 0 0 5px rgba(0,0,0,0.2);
     }
-
-    .storage-section {
-      margin-top: 25px;
+    button, select, input {
+      margin: 5px;
+      padding: 8px 12px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    #addQuoteForm {
+      display: none;
+      margin-top: 15px;
+      background: #fff;
+      padding: 15px;
+      border-radius: 10px;
+      width: 60%;
+      margin-left: auto;
+      margin-right: auto;
     }
   </style>
 </head>
 <body>
   <h1>Dynamic Quote Generator</h1>
 
-  <div id="categoryContainer"></div>
-  <div id="quoteDisplay">Click “Show New Quote” to get started!</div>
-  <button id="newQuote">Show New Quote</button>
+  <!-- Category Filter -->
+  <label for="categoryFilter">Filter by Category:</label>
+  <select id="categoryFilter" onchange="filterQuotes()">
+    <option value="all">All Categories</option>
+  </select>
 
-  <div class="storage-section">
-    <button id="exportBtn">Export Quotes (JSON)</button>
-    <input type="file" id="importFile" accept=".json" onchange="importFromJsonFile(event)" />
+  <div id="quoteDisplay"></div>
+
+  <button onclick="showRandomQuote()">Show Random Quote</button>
+  <button onclick="toggleAddQuoteForm()">Add New Quote</button>
+  <button onclick="exportToJsonFile()">Export Quotes</button>
+
+  <input type="file" id="importFile" accept=".json" onchange="importFromJsonFile(event)" />
+
+  <!-- Add Quote Form -->
+  <div id="addQuoteForm">
+    <h3>Add a New Quote</h3>
+    <input type="text" id="newQuoteText" placeholder="Quote text"><br>
+    <input type="text" id="newQuoteAuthor" placeholder="Author"><br>
+    <input type="text" id="newQuoteCategory" placeholder="Category"><br>
+    <button onclick="addQuote()">Add Quote</button>
   </div>
 
   <script src="script.js"></script>
