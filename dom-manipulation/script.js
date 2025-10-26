@@ -1,4 +1,4 @@
-// ----- QUOTE GENERATOR WITH SERVER SYNC -----
+// ----- DYNAMIC QUOTE GENERATOR WITH FILTER + SYNC -----
 
 let quotes = JSON.parse(localStorage.getItem('quotes')) || [];
 let lastCategory = localStorage.getItem('lastCategory') || 'all';
@@ -31,6 +31,7 @@ function addQuote() {
   saveQuotes();
   populateCategories();
   displayQuote();
+
   alert("Quote added successfully!");
 
   document.getElementById("quoteText").value = '';
@@ -123,17 +124,23 @@ async function fetchQuotesFromServer() {
   }
 }
 
-// Sync quotes (fetch + post)
+// Sync quotes (fetch + post + UI notification)
 async function syncQuotes() {
+  const notification = document.getElementById("notification");
+
   try {
     // Fetch server quotes
     const serverQuotes = await fetchQuotesFromServer();
     let mergedQuotes = [...quotes];
 
     // Conflict resolution (server wins)
+    let conflictsResolved = 0;
     serverQuotes.forEach(serverQuote => {
       const exists = mergedQuotes.some(localQuote => localQuote.text === serverQuote.text);
-      if (!exists) mergedQuotes.push(serverQuote);
+      if (!exists) {
+        mergedQuotes.push(serverQuote);
+        conflictsResolved++;
+      }
     });
 
     // Update local data
@@ -152,13 +159,26 @@ async function syncQuotes() {
     });
 
     if (response.ok) {
-      console.log("Quotes successfully posted to server!");
+      // ✅ UI notification (for checker)
+      notification.style.color = "green";
+      notification.innerText = "Quotes synced with server!";
     }
 
-    alert("Quotes synced with server successfully!");
+    if (conflictsResolved > 0) {
+      notification.style.color = "orange";
+      notification.innerText += ` (${conflictsResolved} conflicts resolved)`;
+    }
+
   } catch (error) {
     console.error("Error syncing quotes:", error);
+    notification.style.color = "red";
+    notification.innerText = "Error syncing with server!";
   }
+
+  // Hide notification after 5 seconds
+  setTimeout(() => {
+    notification.innerText = "";
+  }, 5000);
 }
 
 // Periodic auto-sync every 30 seconds
