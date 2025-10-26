@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dynamic Quote Generator with Filter</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dynamic Quote Generator with Sync</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -35,12 +35,22 @@
       margin-left: auto;
       margin-right: auto;
     }
+    #notification {
+      background-color: #ffffcc;
+      border: 1px solid #cccc99;
+      padding: 10px;
+      border-radius: 5px;
+      margin: 10px auto;
+      width: 60%;
+      display: none;
+    }
   </style>
 </head>
 <body>
   <h1>Dynamic Quote Generator</h1>
 
-  <!-- Category Filter -->
+  <div id="notification"></div>
+
   <label for="categoryFilter">Filter by Category:</label>
   <select id="categoryFilter" onchange="filterQuotes()">
     <option value="all">All Categories</option>
@@ -51,10 +61,10 @@
   <button onclick="showRandomQuote()">Show Random Quote</button>
   <button onclick="toggleAddQuoteForm()">Add New Quote</button>
   <button onclick="exportToJsonFile()">Export Quotes</button>
+  <button onclick="syncWithServer()">Sync with Server</button>
 
   <input type="file" id="importFile" accept=".json" onchange="importFromJsonFile(event)" />
 
-  <!-- Add Quote Form -->
   <div id="addQuoteForm">
     <h3>Add a New Quote</h3>
     <input type="text" id="newQuoteText" placeholder="Quote text"><br>
