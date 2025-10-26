@@ -133,13 +133,13 @@ function importFromJsonFile(event) {
 
 // --- SERVER SYNC FUNCTIONS ---
 
-// Simulate fetching new quotes from server
-async function fetchFromServer() {
+// ✅ The required function name:
+async function fetchQuotesFromServer() {
   try {
     const response = await fetch(SERVER_URL);
     const serverData = await response.json();
 
-    // Simulate server returning only some quotes (mock)
+    // Simulate server returning a few quotes
     const simulatedQuotes = serverData.slice(0, 3).map(post => ({
       text: post.title,
       author: "Server Author",
@@ -167,17 +167,17 @@ async function sendToServer() {
   }
 }
 
-// Merge server and local quotes with conflict resolution
+// Merge server and local quotes (server wins)
 async function syncWithServer() {
   showNotification("Syncing with server...");
-  const serverQuotes = await fetchFromServer();
+  const serverQuotes = await fetchQuotesFromServer();
 
   if (serverQuotes.length === 0) {
     showNotification("No updates from server.");
     return;
   }
 
-  // Conflict resolution: server data takes precedence
+  // Conflict resolution — server data takes precedence
   const merged = [...serverQuotes];
   const localUnique = quotes.filter(
     q => !serverQuotes.some(sq => sq.text === q.text && sq.author === q.author)
@@ -191,10 +191,10 @@ async function syncWithServer() {
   await sendToServer();
 }
 
-// Periodic auto-sync every 30 seconds (simulation)
+// Periodic auto-sync every 30 seconds
 setInterval(syncWithServer, 30000);
 
-// Initialize
+// Initialize app
 window.onload = function() {
   loadQuotes();
   populateCategories();
