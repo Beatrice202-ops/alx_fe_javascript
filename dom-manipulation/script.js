@@ -106,12 +106,11 @@ function importFromJsonFile(event) {
 
 // ----- SERVER SYNC SIMULATION -----
 
-// Simulate fetching quotes from server
+// Fetch quotes from mock server
 async function fetchQuotesFromServer() {
   try {
     const response = await fetch('https://jsonplaceholder.typicode.com/posts?_limit=5');
     const serverData = await response.json();
-    // Simulate converting server data into quote format
     const serverQuotes = serverData.map(item => ({
       text: item.title,
       author: "Server Author",
@@ -124,26 +123,45 @@ async function fetchQuotesFromServer() {
   }
 }
 
-// Sync local data with server
+// Sync quotes (fetch + post)
 async function syncQuotes() {
-  const serverQuotes = await fetchQuotesFromServer();
-  let mergedQuotes = [...quotes];
+  try {
+    // Fetch server quotes
+    const serverQuotes = await fetchQuotesFromServer();
+    let mergedQuotes = [...quotes];
 
-  // Simple conflict resolution — server data takes precedence
-  serverQuotes.forEach(serverQuote => {
-    const exists = mergedQuotes.some(localQuote => localQuote.text === serverQuote.text);
-    if (!exists) mergedQuotes.push(serverQuote);
-  });
+    // Conflict resolution (server wins)
+    serverQuotes.forEach(serverQuote => {
+      const exists = mergedQuotes.some(localQuote => localQuote.text === serverQuote.text);
+      if (!exists) mergedQuotes.push(serverQuote);
+    });
 
-  quotes = mergedQuotes;
-  saveQuotes();
-  populateCategories();
-  displayQuote();
+    // Update local data
+    quotes = mergedQuotes;
+    saveQuotes();
+    populateCategories();
+    displayQuote();
 
-  alert("Quotes synced with server successfully!");
+    // POST local quotes to mock server
+    const response = await fetch("https://jsonplaceholder.typicode.com/posts", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(quotes)
+    });
+
+    if (response.ok) {
+      console.log("Quotes successfully posted to server!");
+    }
+
+    alert("Quotes synced with server successfully!");
+  } catch (error) {
+    console.error("Error syncing quotes:", error);
+  }
 }
 
-// Periodic auto-sync every 30 seconds (simulation)
+// Periodic auto-sync every 30 seconds
 setInterval(syncQuotes, 30000);
 
 // ----- INITIALIZATION -----
